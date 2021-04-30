@@ -9,6 +9,8 @@ app.use(require('cors')())
 
 const usersRoutes = require('./routes/usersRoutes')
 app.use('/users', usersRoutes)
+const listingRoutes = require('./routes/listingRoutes')
+app.use('/listings', listingRoutes)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
