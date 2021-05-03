@@ -55,19 +55,14 @@ listingController.getMy = async (req, res) => {
 
 listingController.destroy = async (req, res) => {
   try {
-    const deleteListing = await models.listing.destroy({
+    const listing = await models.listing.findOne({
       where: { 
           id: req.params.id 
       }
     })
-    console.log(deleteListing)
-    let user = await models.user.findOne({
-      where: {
-        id: req.headers.authorization
-      }
-    })
-    await user.removeListing(deleteListing)
-    res.json({ deleteListing })
+  
+    await listing.destroy()
+    res.json({ listing })
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
@@ -80,7 +75,8 @@ listingController.getOne = async (req,res) => {
           id: req.params.id 
       }
     })
-    res.json({listing})
+
+        res.json({ listing })  
   } catch {
     res.status(400).json({ error: error.message })
   }
@@ -88,11 +84,6 @@ listingController.getOne = async (req,res) => {
 
 listingController.update = async (req, res) => {
   try {
-  const user = await models.user.findOne({
-      where: {
-        id: req.headers.authorization
-      }
-  })
   const listing = await models.listing.findOne({
     where: {
       id: req.params.id
@@ -106,9 +97,53 @@ listingController.update = async (req, res) => {
       instagram: req.body.instagram,
       facebook: req.body.facebook
   })
-      res.json({user, listing})
+      res.json({listing})
   } catch (error) {
       res.status(400).json({ error: error.message })
+  }
+}
+
+listingController.createReview = async (req, res) => {
+  try {
+    const user = await models.user.findOne({
+      where: {
+        id: req.headers.authorization
+      }
+    })
+    
+    const listing = await models.listing.findOne({
+      where: { id: req.params.id }
+    })
+    
+    const review = await models.review.create({
+      description: req.body.description
+    })
+    
+    await review.setUser(user)
+    await review.setListing(listing)
+    
+    res.json({ review })
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error.message })
+  }
+}
+
+listingController.getReviews = async (req, res) => {
+  try {
+      const listing = await models.listing.findOne({
+        where: { 
+            id: req.params.id 
+        }
+      })
+      const reviews = await listing.getReviews()
+     
+          res.json({
+             reviews
+          })  
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error.message })
   }
 }
 

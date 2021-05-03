@@ -9,5 +9,7 @@ listingRoutes.post('/create', listingController.create);
 listingRoutes.delete('/:id', listingController.destroy);
 listingRoutes.get('/:id', listingController.getOne);
 listingRoutes.put('/:id', listingController.update);
+listingRoutes.post('/:id/reviews', listingController.createReview)
+listingRoutes.get('/:id/reviews', listingController.getReviews)
 
 module.exports = listingRoutes
