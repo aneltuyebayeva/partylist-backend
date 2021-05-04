@@ -52,7 +52,6 @@ usersController.verify = async (req, res) => {
               id: decryptedId.userId
           }
       })
-      res.json({ user })
       if (user) {
           res.json({user})
       } else {
