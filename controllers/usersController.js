@@ -1,15 +1,22 @@
 const models = require('../models')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 const usersController = {}
 
 usersController.create = async(req,res) => {
     try {
+        const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+
         const user = await models.user.create ({
             name: req.body.name,
             email: req.body.email,
-            password: req.body.password
+            password: hashedPassword
         })
-        res.json({message: 'user created', user})
+
+        const encryptedId = jwt.sign({ userId: user.id }, process.env.JWT_SECRET)
+
+        res.json({message: 'user created', user, userId: encryptedId})
     } catch (error) {
         res.status(400)
         res.json({error: 'email is already taken'})
@@ -18,27 +25,34 @@ usersController.create = async(req,res) => {
 
 
 usersController.login = async(req,res) => {
+    try {
     const user = await models.user.findOne({
         where: {
             email: req.body.email,
         }
     }) 
-    if (user.password === req.body.password) {
+    if (bcrypt.compareSync(req.body.password, user.password)) {
+        const encryptedId = jwt.sign({ userId: user.id }, process.env.JWT_SECRET)
         res.status(200)
-        res.json({id: user.id, name: user.name})
+        res.json({message: 'login successful', userId: encryptedId})
     } else {
-        res.status(400)
-        res.json({error: 'invalid password'})
+        res.status(401).json({error: 'invalid password'})
+    } 
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: 'login failed' })
     }
 }
 
 usersController.verify = async (req, res) => {
     try {
+      const decryptedId = jwt.verify(req.headers.authorization, process.env.JWT_SECRET)  
       const user = await models.user.findOne({
           where: {
-              id: req.headers.authorization
+              id: decryptedId.userId
           }
       })
+      res.json({ user })
       if (user) {
           res.json({user})
       } else {

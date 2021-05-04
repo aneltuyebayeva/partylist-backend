@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express')
 const app = express()
 
@@ -9,6 +11,7 @@ app.use(require('cors')())
 
 const usersRoutes = require('./routes/usersRoutes')
 app.use('/users', usersRoutes)
+
 const listingRoutes = require('./routes/listingRoutes')
 app.use('/listings', listingRoutes)
 
