@@ -12,6 +12,7 @@ let sequelize;
 console.log('!!!')
 console.log(env)
 console.log(config)
+console.log(process.env)
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
