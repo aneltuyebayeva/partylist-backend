@@ -45,8 +45,10 @@ usersController.login = async(req,res) => {
 }
 
 usersController.verify = async (req, res) => {
+    console.log(req.headers)
     try {
-      const decryptedId = jwt.verify(req.headers.authorization, process.env.JWT_SECRET)  
+      const decryptedId = jwt.verify(req.headers.authorization, process.env.JWT_SECRET) 
+      console.log(decryptedId) 
       const user = await models.user.findOne({
           where: {
               id: decryptedId.userId
