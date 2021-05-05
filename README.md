@@ -1,7 +1,9 @@
 # Party List
 
 ## Overview
-This app contains information about any party providers that people need to plan their events and parties.
+This app helps people to connect with any party service providers that people need for their upcoming events and parties. 
+
+Website link: https://partylistfrontend.herokuapp.com/
 
 ## Wireframes
 
